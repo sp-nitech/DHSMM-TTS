@@ -1,0 +1,415 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,
+				   initial-scale=1">
+    <style>
+      .scroll-wrapper {
+      overflow-x: auto;
+      max-width: 100%;
+      }
+
+      table {
+      }
+
+      th, td {
+      }
+      
+      .sticky-col {
+      position: sticky;
+      left: 0;
+      min-width: 120px;
+      max-width: 120px;
+      background: #ffffff;
+      z-index: 1;
+      }
+      
+      th.sticky-col {
+      z-index: 2;
+      background: #ffffff;
+      }
+    </style>
+    <title>Deep Hidden Semi-Markov Model-Based Speech Synthesis</title>
+  </head>
+  <body>
+    <header>
+      <h1>Deep Hidden Semi-Markov Model-Based Speech Synthesis</h1>
+      <p>
+	Yoshihiko Nankaku, Takato Fujimoto, Takenori Yoshimura, Shinji Takaki, Kei Hashimoto, Keiichiro Oura, and Keiichi Tokuda
+        <br>
+        Nagoya Institute of Technology, Japan
+      </p>
+    </header>
+    <p>
+      <td style="width: 100px;" align="left">
+	<b>Abstract:</b>
+	This paper proposes a speech synthesis technique based on a neural
+	sequence-to-sequence (Seq2Seq) model that incorporates the structure
+	of hidden semi-Markov models (HSMMs).  
+	While Seq2Seq models with attention mechanisms have achieved
+	high-quality speech synthesis, they suffer from alignment instability
+	and the absence of explicit duration modeling, making direct duration
+	control difficult.  
+	To address these challenges, recent approaches have explored models
+	that incorporate explicit alignment and duration representations
+	instead of attention mechanisms.  
+	However, these methods have yet to fully achieve the consistency in
+	duration handling that traditional HSMM-based synthesis provides.  
+	The proposed model is a theoretically well-grounded deep generative
+	model that integrates HSMM structure into a variational autoencoder
+	(VAE).  
+	It performs probabilistic full-space alignment search considering
+	duration probabilities, and its training algorithm is derived purely
+	from the maximization of the evidence lower bound (ELBO), without
+	relying on heuristic assumptions or auxiliary criteria.  
+	A key contribution of this work is the clarification of an essential
+	two-stage approximation necessary for the proposed model, comprising:  
+	(i) a conjugate posterior distribution with an HSMM structure, and  
+	(ii) a subsequent mean-field approximation for the VAE decoder.  
+	Furthermore, interpreting the proposed model as a Seq2Seq model with
+	an HSMM-structured attention mechanism establishes a theoretical
+	connection between attention mechanisms and explicit alignment
+	modeling.  
+	Experiments on a Japanese speech database demonstrate that the
+	proposed method achieves higher-quality synthesized speech compared to
+	conventional neural network-based acoustic models, while maintaining
+	high modeling efficiency even with limited training data.
+      </td>
+    </p>
+    <p>
+      Code: <a href="https://github.com/sp-nitech/DHSMM-TTS">https://github.com/sp-nitech/DHSMM-TTS</a>
+    </p>
+
+    <p>&nbsp;</p>
+
+    <h2>Audio samples</h2>
+    <td>
+      <div style="overflow-x: auto;" class="scroll-wrapper">
+	<table style="table-layout: auto; border-collapse: collapse;">
+          <tr>
+	    <td>    Filename  <br>
+	      <button onclick="loadAndUseLines()">
+		<span style="font-size: 14px;">
+		  Change files
+		</span>
+	      </button>
+	    </td>
+	    <td> <div id="filename1"> fn1 </div> </td>
+	    <td> <div id="filename2"> fn2 </div> </td>
+	    <td> <div id="filename3"> fn3 </div> </td>
+	    <td> <div id="filename4"> fn4 </div> </td>
+	    <td> <div id="filename5"> fn5 </div> </td>
+	    
+	  </tr>
+      <tr><td colspan="3" class="sticky-col"><h3> XIMERA corpus (Full-set: 9.5 hours, WaveGrad) </h3></td></tr>
+        <tr>
+          <td style="width: 500px;" align="left" class="sticky-col">Natural </td>
+          <td><audio controls="" preload="none" id="fullset1_Natural_0"/></audio></td>
+          <td><audio controls="" preload="none" id="fullset1_Natural_1"/></audio></td>
+          <td><audio controls="" preload="none" id="fullset1_Natural_2"/></audio></td>
+          <td><audio controls="" preload="none" id="fullset1_Natural_3"/></audio></td>
+          <td><audio controls="" preload="none" id="fullset1_Natural_4"/></audio></td>
+        </tr>
+        <tr>
+          <td style="width: 500px;" align="left" class="sticky-col">AS </td>
+          <td><audio controls="" preload="none" id="fullset1_AS_0"/></audio></td>
+          <td><audio controls="" preload="none" id="fullset1_AS_1"/></audio></td>
+          <td><audio controls="" preload="none" id="fullset1_AS_2"/></audio></td>
+          <td><audio controls="" preload="none" id="fullset1_AS_3"/></audio></td>
+          <td><audio controls="" preload="none" id="fullset1_AS_4"/></audio></td>
+        </tr>
+        <tr>
+          <td style="width: 500px;" align="left" class="sticky-col">Tacotron 2 </td>
+          <td><audio controls="" preload="none" id="fullset1_tacotron2_0"/></audio></td>
+          <td><audio controls="" preload="none" id="fullset1_tacotron2_1"/></audio></td>
+          <td><audio controls="" preload="none" id="fullset1_tacotron2_2"/></audio></td>
+          <td><audio controls="" preload="none" id="fullset1_tacotron2_3"/></audio></td>
+          <td><audio controls="" preload="none" id="fullset1_tacotron2_4"/></audio></td>
+        </tr>
+        <tr>
+          <td style="width: 500px;" align="left" class="sticky-col">Fastspeech 2 </td>
+          <td><audio controls="" preload="none" id="fullset1_fastspeech2_0"/></audio></td>
+          <td><audio controls="" preload="none" id="fullset1_fastspeech2_1"/></audio></td>
+          <td><audio controls="" preload="none" id="fullset1_fastspeech2_2"/></audio></td>
+          <td><audio controls="" preload="none" id="fullset1_fastspeech2_3"/></audio></td>
+          <td><audio controls="" preload="none" id="fullset1_fastspeech2_4"/></audio></td>
+        </tr>
+        <tr>
+          <td style="width: 500px;" align="left" class="sticky-col">Glow-TTS </td>
+          <td><audio controls="" preload="none" id="fullset1_glowtts_0"/></audio></td>
+          <td><audio controls="" preload="none" id="fullset1_glowtts_1"/></audio></td>
+          <td><audio controls="" preload="none" id="fullset1_glowtts_2"/></audio></td>
+          <td><audio controls="" preload="none" id="fullset1_glowtts_3"/></audio></td>
+          <td><audio controls="" preload="none" id="fullset1_glowtts_4"/></audio></td>
+        </tr>
+        <tr>
+          <td style="width: 500px;" align="left" class="sticky-col">DHSMM-TTS VEM </td>
+          <td><audio controls="" preload="none" id="fullset1_VEM_0"/></audio></td>
+          <td><audio controls="" preload="none" id="fullset1_VEM_1"/></audio></td>
+          <td><audio controls="" preload="none" id="fullset1_VEM_2"/></audio></td>
+          <td><audio controls="" preload="none" id="fullset1_VEM_3"/></audio></td>
+          <td><audio controls="" preload="none" id="fullset1_VEM_4"/></audio></td>
+        </tr>
+        <tr>
+          <td style="width: 500px;" align="left" class="sticky-col">DHSMM-TTS ELBO </td>
+          <td><audio controls="" preload="none" id="fullset1_ELBO_0"/></audio></td>
+          <td><audio controls="" preload="none" id="fullset1_ELBO_1"/></audio></td>
+          <td><audio controls="" preload="none" id="fullset1_ELBO_2"/></audio></td>
+          <td><audio controls="" preload="none" id="fullset1_ELBO_3"/></audio></td>
+          <td><audio controls="" preload="none" id="fullset1_ELBO_4"/></audio></td>
+        </tr>
+      <tr><td colspan="3" class="sticky-col"><h3> XIMERA corpus (Full-set: 9.5 hours, HiFi-GAN) </h3></td></tr>
+        <tr>
+          <td style="width: 500px;" align="left" class="sticky-col">Natural </td>
+          <td><audio controls="" preload="none" id="fullset2_Natural_0"/></audio></td>
+          <td><audio controls="" preload="none" id="fullset2_Natural_1"/></audio></td>
+          <td><audio controls="" preload="none" id="fullset2_Natural_2"/></audio></td>
+          <td><audio controls="" preload="none" id="fullset2_Natural_3"/></audio></td>
+          <td><audio controls="" preload="none" id="fullset2_Natural_4"/></audio></td>
+        </tr>
+        <tr>
+          <td style="width: 500px;" align="left" class="sticky-col">AS </td>
+          <td><audio controls="" preload="none" id="fullset2_AS_0"/></audio></td>
+          <td><audio controls="" preload="none" id="fullset2_AS_1"/></audio></td>
+          <td><audio controls="" preload="none" id="fullset2_AS_2"/></audio></td>
+          <td><audio controls="" preload="none" id="fullset2_AS_3"/></audio></td>
+          <td><audio controls="" preload="none" id="fullset2_AS_4"/></audio></td>
+        </tr>
+        <tr>
+          <td style="width: 500px;" align="left" class="sticky-col">Tacotron 2 </td>
+          <td><audio controls="" preload="none" id="fullset2_tacotron2_0"/></audio></td>
+          <td><audio controls="" preload="none" id="fullset2_tacotron2_1"/></audio></td>
+          <td><audio controls="" preload="none" id="fullset2_tacotron2_2"/></audio></td>
+          <td><audio controls="" preload="none" id="fullset2_tacotron2_3"/></audio></td>
+          <td><audio controls="" preload="none" id="fullset2_tacotron2_4"/></audio></td>
+        </tr>
+        <tr>
+          <td style="width: 500px;" align="left" class="sticky-col">Fastspeech 2 </td>
+          <td><audio controls="" preload="none" id="fullset2_fastspeech2_0"/></audio></td>
+          <td><audio controls="" preload="none" id="fullset2_fastspeech2_1"/></audio></td>
+          <td><audio controls="" preload="none" id="fullset2_fastspeech2_2"/></audio></td>
+          <td><audio controls="" preload="none" id="fullset2_fastspeech2_3"/></audio></td>
+          <td><audio controls="" preload="none" id="fullset2_fastspeech2_4"/></audio></td>
+        </tr>
+        <tr>
+          <td style="width: 500px;" align="left" class="sticky-col">Glow-TTS </td>
+          <td><audio controls="" preload="none" id="fullset2_glowtts_0"/></audio></td>
+          <td><audio controls="" preload="none" id="fullset2_glowtts_1"/></audio></td>
+          <td><audio controls="" preload="none" id="fullset2_glowtts_2"/></audio></td>
+          <td><audio controls="" preload="none" id="fullset2_glowtts_3"/></audio></td>
+          <td><audio controls="" preload="none" id="fullset2_glowtts_4"/></audio></td>
+        </tr>
+        <tr>
+          <td style="width: 500px;" align="left" class="sticky-col">DHSMM-TTS VEM </td>
+          <td><audio controls="" preload="none" id="fullset2_VEM_0"/></audio></td>
+          <td><audio controls="" preload="none" id="fullset2_VEM_1"/></audio></td>
+          <td><audio controls="" preload="none" id="fullset2_VEM_2"/></audio></td>
+          <td><audio controls="" preload="none" id="fullset2_VEM_3"/></audio></td>
+          <td><audio controls="" preload="none" id="fullset2_VEM_4"/></audio></td>
+        </tr>
+        <tr>
+          <td style="width: 500px;" align="left" class="sticky-col">DHSMM-TTS ELBO </td>
+          <td><audio controls="" preload="none" id="fullset2_ELBO_0"/></audio></td>
+          <td><audio controls="" preload="none" id="fullset2_ELBO_1"/></audio></td>
+          <td><audio controls="" preload="none" id="fullset2_ELBO_2"/></audio></td>
+          <td><audio controls="" preload="none" id="fullset2_ELBO_3"/></audio></td>
+          <td><audio controls="" preload="none" id="fullset2_ELBO_4"/></audio></td>
+        </tr>
+      <tr><td colspan="3" class="sticky-col"><h3> XIMERA corpus (Small-set: 0.55 hours, WaveGrad) </h3></td></tr>
+        <tr>
+          <td style="width: 500px;" align="left" class="sticky-col">AS </td>
+          <td><audio controls="" preload="none" id="smallset_AS_0"/></audio></td>
+          <td><audio controls="" preload="none" id="smallset_AS_1"/></audio></td>
+          <td><audio controls="" preload="none" id="smallset_AS_2"/></audio></td>
+          <td><audio controls="" preload="none" id="smallset_AS_3"/></audio></td>
+          <td><audio controls="" preload="none" id="smallset_AS_4"/></audio></td>
+        </tr>
+        <tr>
+          <td style="width: 500px;" align="left" class="sticky-col">Fastspeech 2 </td>
+          <td><audio controls="" preload="none" id="smallset_fastspeech2_0"/></audio></td>
+          <td><audio controls="" preload="none" id="smallset_fastspeech2_1"/></audio></td>
+          <td><audio controls="" preload="none" id="smallset_fastspeech2_2"/></audio></td>
+          <td><audio controls="" preload="none" id="smallset_fastspeech2_3"/></audio></td>
+          <td><audio controls="" preload="none" id="smallset_fastspeech2_4"/></audio></td>
+        </tr>
+        <tr>
+          <td style="width: 500px;" align="left" class="sticky-col">DHSMM-TTS VEM_Viterbi </td>
+          <td><audio controls="" preload="none" id="smallset_VEM_Viterbi_0"/></audio></td>
+          <td><audio controls="" preload="none" id="smallset_VEM_Viterbi_1"/></audio></td>
+          <td><audio controls="" preload="none" id="smallset_VEM_Viterbi_2"/></audio></td>
+          <td><audio controls="" preload="none" id="smallset_VEM_Viterbi_3"/></audio></td>
+          <td><audio controls="" preload="none" id="smallset_VEM_Viterbi_4"/></audio></td>
+        </tr>
+        <tr>
+          <td style="width: 500px;" align="left" class="sticky-col">DHSMM-TTS VEM_sg_&gamma; </td>
+          <td><audio controls="" preload="none" id="smallset_VEM_sg_gamma_0"/></audio></td>
+          <td><audio controls="" preload="none" id="smallset_VEM_sg_gamma_1"/></audio></td>
+          <td><audio controls="" preload="none" id="smallset_VEM_sg_gamma_2"/></audio></td>
+          <td><audio controls="" preload="none" id="smallset_VEM_sg_gamma_3"/></audio></td>
+          <td><audio controls="" preload="none" id="smallset_VEM_sg_gamma_4"/></audio></td>
+        </tr>
+        <tr>
+          <td style="width: 500px;" align="left" class="sticky-col">DHSMM-TTS VEM </td>
+          <td><audio controls="" preload="none" id="smallset_VEM_0"/></audio></td>
+          <td><audio controls="" preload="none" id="smallset_VEM_1"/></audio></td>
+          <td><audio controls="" preload="none" id="smallset_VEM_2"/></audio></td>
+          <td><audio controls="" preload="none" id="smallset_VEM_3"/></audio></td>
+          <td><audio controls="" preload="none" id="smallset_VEM_4"/></audio></td>
+        </tr>
+        <tr>
+          <td style="width: 500px;" align="left" class="sticky-col">DHSMM-TTS ELBO </td>
+          <td><audio controls="" preload="none" id="smallset_ELBO_0"/></audio></td>
+          <td><audio controls="" preload="none" id="smallset_ELBO_1"/></audio></td>
+          <td><audio controls="" preload="none" id="smallset_ELBO_2"/></audio></td>
+          <td><audio controls="" preload="none" id="smallset_ELBO_3"/></audio></td>
+          <td><audio controls="" preload="none" id="smallset_ELBO_4"/></audio></td>
+        </tr>
+	  <tr><td colspan="3" class="sticky-col"><h3> Duration cotrol demo (Full-set: 9.5 hours, WaveGrad) </h3></td></tr>
+          <tr>
+            <td style="width: 500px;" align="left" class="sticky-col">  r_d=1.0 </td>
+	    <td><audio controls=""
+		       preload="none"><source src="samples/duration_demo/duration_1.0.wav"></audio></td> 
+          </tr>
+	  <tr>
+            <td style="width: 500px;" align="left" class="sticky-col">  r_d=0.8 </td>
+	    <td><audio controls=""
+		       preload="none"><source src="samples/duration_demo/duration_0.8.wav"></audio></td> 
+          </tr>
+	  <tr>
+            <td style="width: 500px;" align="left" class="sticky-col">  r_d=1.2 </td>
+	    <td><audio controls=""
+		       preload="none"><source src="samples/duration_demo/duration_1.2.wav"></audio></td> 
+          </tr>
+	  <tr>
+            <td style="width: 500px;" align="left" class="sticky-col">  Modified </td>
+	    <td><audio controls=""
+		       preload="none"><source src="samples/duration_demo/duration_mod.wav"></audio></td> 
+          </tr>
+	</table>
+      </div>
+      <script>
+
+	async function loadAndUseLines() {
+	    const response = await fetch('filelist.txt');
+	    const text = await response.text();
+	    const fn = text.split(/\r?\n/).map(line => line.trim()).filter(line => line !== '');
+
+	    for (let i = fn.length - 1; i > 0; i--) {
+		const j = Math.floor(Math.random() * (i + 1));
+		[fn[i], fn[j]] = [fn[j], fn[i]]; 
+	    }
+
+	    document.getElementById('filename1').textContent = `${fn[0]}`;
+	    document.getElementById('filename2').textContent = `${fn[1]}`;
+	    document.getElementById('filename3').textContent = `${fn[2]}`;
+	    document.getElementById('filename4').textContent = `${fn[3]}`;
+	    document.getElementById('filename5').textContent = `${fn[4]}`;
+
+	    document.getElementById('fullset1_Natural_0').src = `samples/fullset1/natural/${fn[0]}`
+	    document.getElementById('fullset1_Natural_1').src = `samples/fullset1/natural/${fn[1]}`
+	    document.getElementById('fullset1_Natural_2').src = `samples/fullset1/natural/${fn[2]}`
+	    document.getElementById('fullset1_Natural_3').src = `samples/fullset1/natural/${fn[3]}`
+	    document.getElementById('fullset1_Natural_4').src = `samples/fullset1/natural/${fn[4]}`
+	    document.getElementById('fullset1_AS_0').src = `samples/fullset1/abs/${fn[0]}`
+	    document.getElementById('fullset1_AS_1').src = `samples/fullset1/abs/${fn[1]}`
+	    document.getElementById('fullset1_AS_2').src = `samples/fullset1/abs/${fn[2]}`
+	    document.getElementById('fullset1_AS_3').src = `samples/fullset1/abs/${fn[3]}`
+	    document.getElementById('fullset1_AS_4').src = `samples/fullset1/abs/${fn[4]}`
+	    document.getElementById('fullset1_tacotron2_0').src = `samples/fullset1/tacotron2/${fn[0]}`
+	    document.getElementById('fullset1_tacotron2_1').src = `samples/fullset1/tacotron2/${fn[1]}`
+	    document.getElementById('fullset1_tacotron2_2').src = `samples/fullset1/tacotron2/${fn[2]}`
+	    document.getElementById('fullset1_tacotron2_3').src = `samples/fullset1/tacotron2/${fn[3]}`
+	    document.getElementById('fullset1_tacotron2_4').src = `samples/fullset1/tacotron2/${fn[4]}`
+	    document.getElementById('fullset1_fastspeech2_0').src = `samples/fullset1/fastspeech2/${fn[0]}`
+	    document.getElementById('fullset1_fastspeech2_1').src = `samples/fullset1/fastspeech2/${fn[1]}`
+	    document.getElementById('fullset1_fastspeech2_2').src = `samples/fullset1/fastspeech2/${fn[2]}`
+	    document.getElementById('fullset1_fastspeech2_3').src = `samples/fullset1/fastspeech2/${fn[3]}`
+	    document.getElementById('fullset1_fastspeech2_4').src = `samples/fullset1/fastspeech2/${fn[4]}`
+	    document.getElementById('fullset1_glowtts_0').src = `samples/fullset1/glowtts/${fn[0]}`
+	    document.getElementById('fullset1_glowtts_1').src = `samples/fullset1/glowtts/${fn[1]}`
+	    document.getElementById('fullset1_glowtts_2').src = `samples/fullset1/glowtts/${fn[2]}`
+	    document.getElementById('fullset1_glowtts_3').src = `samples/fullset1/glowtts/${fn[3]}`
+	    document.getElementById('fullset1_glowtts_4').src = `samples/fullset1/glowtts/${fn[4]}`
+	    document.getElementById('fullset1_VEM_0').src = `samples/fullset1/EMt_128/${fn[0]}`
+	    document.getElementById('fullset1_VEM_1').src = `samples/fullset1/EMt_128/${fn[1]}`
+	    document.getElementById('fullset1_VEM_2').src = `samples/fullset1/EMt_128/${fn[2]}`
+	    document.getElementById('fullset1_VEM_3').src = `samples/fullset1/EMt_128/${fn[3]}`
+	    document.getElementById('fullset1_VEM_4').src = `samples/fullset1/EMt_128/${fn[4]}`
+	    document.getElementById('fullset1_ELBO_0').src = `samples/fullset1/ELBO_1024/${fn[0]}`
+	    document.getElementById('fullset1_ELBO_1').src = `samples/fullset1/ELBO_1024/${fn[1]}`
+	    document.getElementById('fullset1_ELBO_2').src = `samples/fullset1/ELBO_1024/${fn[2]}`
+	    document.getElementById('fullset1_ELBO_3').src = `samples/fullset1/ELBO_1024/${fn[3]}`
+	    document.getElementById('fullset1_ELBO_4').src = `samples/fullset1/ELBO_1024/${fn[4]}`
+	    document.getElementById('fullset2_Natural_0').src = `samples/fullset2/natural/${fn[0]}`
+	    document.getElementById('fullset2_Natural_1').src = `samples/fullset2/natural/${fn[1]}`
+	    document.getElementById('fullset2_Natural_2').src = `samples/fullset2/natural/${fn[2]}`
+	    document.getElementById('fullset2_Natural_3').src = `samples/fullset2/natural/${fn[3]}`
+	    document.getElementById('fullset2_Natural_4').src = `samples/fullset2/natural/${fn[4]}`
+	    document.getElementById('fullset2_AS_0').src = `samples/fullset2/abs/${fn[0]}`
+	    document.getElementById('fullset2_AS_1').src = `samples/fullset2/abs/${fn[1]}`
+	    document.getElementById('fullset2_AS_2').src = `samples/fullset2/abs/${fn[2]}`
+	    document.getElementById('fullset2_AS_3').src = `samples/fullset2/abs/${fn[3]}`
+	    document.getElementById('fullset2_AS_4').src = `samples/fullset2/abs/${fn[4]}`
+	    document.getElementById('fullset2_tacotron2_0').src = `samples/fullset2/tacotron2/${fn[0]}`
+	    document.getElementById('fullset2_tacotron2_1').src = `samples/fullset2/tacotron2/${fn[1]}`
+	    document.getElementById('fullset2_tacotron2_2').src = `samples/fullset2/tacotron2/${fn[2]}`
+	    document.getElementById('fullset2_tacotron2_3').src = `samples/fullset2/tacotron2/${fn[3]}`
+	    document.getElementById('fullset2_tacotron2_4').src = `samples/fullset2/tacotron2/${fn[4]}`
+	    document.getElementById('fullset2_fastspeech2_0').src = `samples/fullset2/fastspeech2/${fn[0]}`
+	    document.getElementById('fullset2_fastspeech2_1').src = `samples/fullset2/fastspeech2/${fn[1]}`
+	    document.getElementById('fullset2_fastspeech2_2').src = `samples/fullset2/fastspeech2/${fn[2]}`
+	    document.getElementById('fullset2_fastspeech2_3').src = `samples/fullset2/fastspeech2/${fn[3]}`
+	    document.getElementById('fullset2_fastspeech2_4').src = `samples/fullset2/fastspeech2/${fn[4]}`
+	    document.getElementById('fullset2_glowtts_0').src = `samples/fullset2/glowtts/${fn[0]}`
+	    document.getElementById('fullset2_glowtts_1').src = `samples/fullset2/glowtts/${fn[1]}`
+	    document.getElementById('fullset2_glowtts_2').src = `samples/fullset2/glowtts/${fn[2]}`
+	    document.getElementById('fullset2_glowtts_3').src = `samples/fullset2/glowtts/${fn[3]}`
+	    document.getElementById('fullset2_glowtts_4').src = `samples/fullset2/glowtts/${fn[4]}`
+	    document.getElementById('fullset2_VEM_0').src = `samples/fullset2/EMt_128/${fn[0]}`
+	    document.getElementById('fullset2_VEM_1').src = `samples/fullset2/EMt_128/${fn[1]}`
+	    document.getElementById('fullset2_VEM_2').src = `samples/fullset2/EMt_128/${fn[2]}`
+	    document.getElementById('fullset2_VEM_3').src = `samples/fullset2/EMt_128/${fn[3]}`
+	    document.getElementById('fullset2_VEM_4').src = `samples/fullset2/EMt_128/${fn[4]}`
+	    document.getElementById('fullset2_ELBO_0').src = `samples/fullset2/ELBO_1024/${fn[0]}`
+	    document.getElementById('fullset2_ELBO_1').src = `samples/fullset2/ELBO_1024/${fn[1]}`
+	    document.getElementById('fullset2_ELBO_2').src = `samples/fullset2/ELBO_1024/${fn[2]}`
+	    document.getElementById('fullset2_ELBO_3').src = `samples/fullset2/ELBO_1024/${fn[3]}`
+	    document.getElementById('fullset2_ELBO_4').src = `samples/fullset2/ELBO_1024/${fn[4]}`
+	    document.getElementById('smallset_AS_0').src = `samples/smallset/abs/${fn[0]}`
+	    document.getElementById('smallset_AS_1').src = `samples/smallset/abs/${fn[1]}`
+	    document.getElementById('smallset_AS_2').src = `samples/smallset/abs/${fn[2]}`
+	    document.getElementById('smallset_AS_3').src = `samples/smallset/abs/${fn[3]}`
+	    document.getElementById('smallset_AS_4').src = `samples/smallset/abs/${fn[4]}`
+	    document.getElementById('smallset_fastspeech2_0').src = `samples/smallset/fastspeech2/${fn[0]}`
+	    document.getElementById('smallset_fastspeech2_1').src = `samples/smallset/fastspeech2/${fn[1]}`
+	    document.getElementById('smallset_fastspeech2_2').src = `samples/smallset/fastspeech2/${fn[2]}`
+	    document.getElementById('smallset_fastspeech2_3').src = `samples/smallset/fastspeech2/${fn[3]}`
+	    document.getElementById('smallset_fastspeech2_4').src = `samples/smallset/fastspeech2/${fn[4]}`
+	    document.getElementById('smallset_VEM_Viterbi_0').src = `samples/smallset/EMv/${fn[0]}`
+	    document.getElementById('smallset_VEM_Viterbi_1').src = `samples/smallset/EMv/${fn[1]}`
+	    document.getElementById('smallset_VEM_Viterbi_2').src = `samples/smallset/EMv/${fn[2]}`
+	    document.getElementById('smallset_VEM_Viterbi_3').src = `samples/smallset/EMv/${fn[3]}`
+	    document.getElementById('smallset_VEM_Viterbi_4').src = `samples/smallset/EMv/${fn[4]}`
+	    document.getElementById('smallset_VEM_sg_gamma_0').src = `samples/smallset/EM/${fn[0]}`
+	    document.getElementById('smallset_VEM_sg_gamma_1').src = `samples/smallset/EM/${fn[1]}`
+	    document.getElementById('smallset_VEM_sg_gamma_2').src = `samples/smallset/EM/${fn[2]}`
+	    document.getElementById('smallset_VEM_sg_gamma_3').src = `samples/smallset/EM/${fn[3]}`
+	    document.getElementById('smallset_VEM_sg_gamma_4').src = `samples/smallset/EM/${fn[4]}`
+	    document.getElementById('smallset_VEM_0').src = `samples/smallset/EMt/${fn[0]}`
+	    document.getElementById('smallset_VEM_1').src = `samples/smallset/EMt/${fn[1]}`
+	    document.getElementById('smallset_VEM_2').src = `samples/smallset/EMt/${fn[2]}`
+	    document.getElementById('smallset_VEM_3').src = `samples/smallset/EMt/${fn[3]}`
+	    document.getElementById('smallset_VEM_4').src = `samples/smallset/EMt/${fn[4]}`
+	    document.getElementById('smallset_ELBO_0').src = `samples/smallset/ELBO/${fn[0]}`
+	    document.getElementById('smallset_ELBO_1').src = `samples/smallset/ELBO/${fn[1]}`
+	    document.getElementById('smallset_ELBO_2').src = `samples/smallset/ELBO/${fn[2]}`
+	    document.getElementById('smallset_ELBO_3').src = `samples/smallset/ELBO/${fn[3]}`
+	    document.getElementById('smallset_ELBO_4').src = `samples/smallset/ELBO/${fn[4]}`
+	}
+
+	loadAndUseLines();
+	
+      </script>
+  </body>
+</html>
